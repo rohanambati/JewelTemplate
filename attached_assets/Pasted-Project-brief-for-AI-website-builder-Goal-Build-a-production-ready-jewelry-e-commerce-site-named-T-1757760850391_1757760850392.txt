@@ -1,0 +1,145 @@
+Project brief for AI website builder
+
+Goal
+
+Build a production-ready jewelry e-commerce site named Terces Jewellery with elegant, luxurious styling and fast performance.
+
+Brand and tone
+
+Premium, modern, minimal.
+
+Black/white base with gold accents.
+
+Serif display headings + clean sans-serif body.
+
+Structure and pages
+
+Global: sticky top nav with logo Terces Jewellery left; links: Home, Collections, Buy, Offers, Support, Contact; right-side icons for search, account, cart. Responsive and keyboard accessible.
+
+Home:
+
+Hero: dark backdrop, spotlighted diamond necklace image, headline “Elevate Your Elegance”, subtext “Handcrafted jewelry where timeless design meets modern sophistication.”, CTA “Explore Collections”.
+
+“Our Signature Collections” with 3 cards: Emerald Dreams, Timeless Diamonds, Golden Essence; each card: image, 1-sentence blurb, “View Collection”.
+
+Product grid preview: 3 featured items with image, name, star rating, short copy, price, Add to Cart, wishlist heart. Grid/List toggle and Filters button.
+
+Trust strip: “Free shipping over ₹5,000 – 30-day returns – Secure payments.”
+
+Collections: masonry/grid with collection tiles (Emerald, Diamond, Gold, Sapphire, Pearls), each linking to product listings; short SEO text under each.
+
+Buy (Shop): faceted filters (Category, Metal, Gemstone, Price range, Rating, Availability), Sort by (Popularity, Newest, Price, Rating), paginated product grid.
+
+Offers: time-bound promotions with countdowns, promo badges, coupon entry.
+
+Product detail: zoomable gallery, title, price, rating, stock, options (size/length/metal), quantity stepper, Add to Cart + Buy Now, materials/craftsmanship/warranty bullets, shipping/returns accordion, social share, related products carousel.
+
+Support: FAQs, contact form (name/email/message), WhatsApp link, store policies.
+
+Contact: address, hours, email, phone, embedded map, inquiry form.
+
+Footer: About, Care, Warranty, Shipping & Returns, Privacy, Terms, social icons, newsletter signup.
+
+Content and images
+
+Auto-source high-res royalty-free product/lifestyle images from Unsplash (first choice), fallback to Vecteezy/Freepik; if paid allowed, prefer Shutterstock/Getty.
+
+Hero 2400px+, product 1600px+, compressed WebP/AVIF with alt text.
+
+Generate AI hero/category photos with reflective black backgrounds and bokeh, preserving jewelry realism.
+
+E-commerce functionality
+
+Full cart, checkout, and order flow with Stripe + Razorpay.
+
+Guest checkout, email receipts, India tax/shipping rules.
+
+Inventory tracking, SKUs, product variants (metal/size), wishlist, reviews with stars + count.
+
+Coupons and automatic discounts with countdown timers for Offers page.
+
+Performance and SEO
+
+Mobile-first responsive.
+
+Lazy-load images, next-gen formats, prefetch assets.
+
+Core Web Vitals ≥ 90 on mobile.
+
+On-page SEO: semantic headings, meta titles/descriptions, JSON-LD for Product, Breadcrumb, Organization, Offer.
+
+Descriptive alt text, human-readable URLs (/collections/emerald-dreams, /product/emerald-cocktail-ring).
+
+Sitemap.xml + robots.txt.
+
+Accessibility
+
+WCAG AA compliant: color contrast, focus outlines, skip links, aria labels, keyboard-navigable menus/carousels.
+
+Analytics and marketing
+
+GA4 + Meta Pixel with e-commerce events (view_item, add_to_cart, begin_checkout, purchase).
+
+Newsletter integration.
+
+Open Graph + Twitter Card metadata.
+
+Sample data to seed
+
+Collections: Emerald Dreams, Timeless Diamonds, Golden Essence, Sapphire Nights, Pearl Classics.
+
+Featured products:
+
+Emerald Cocktail Ring — ₹104,999 — “Statement ring featuring a brilliant emerald center stone surrounded by diamonds.”
+
+Diamond Tennis Bracelet — ₹269,999 — “Continuous line of round brilliant diamonds.”
+
+Gold Pearl Necklace — ₹71,999 — “Cultured pearls with a gold clasp.”
+
+Sapphire Drop Earrings — ₹121,999 — “Blue sapphires with diamond accents.”
+
+Diamond Solitaire Necklace — ₹183,999 — “Brilliant-cut solitaire pendant.”
+
+Gold Chain Bracelet — ₹54,999 — “Modern chain with secure lobster clasp.”
+
+Quality checklist (must pass before publish)
+
+All CTAs functional.
+
+Cart/checkout completes a sandbox purchase.
+
+Filters + search work.
+
+Images crisp and responsive.
+
+Lighthouse performance ≥ 90 on mobile.
+
+Alt text present.
+
+Schema validated.
+
+404 page present.
+
+Email/contact forms deliver.
+
+SSL enabled, sitemap generated, submitted to Search Console.
+
+Google Business Profile linked from Contact page.
+
+Deliverables
+
+Live working site with all pages, seeded products, content.
+
+CMS access for editing.
+
+Documentation for adding collections/products.
+
+Exportable theme/template.
+
+Image guidelines
+
+Close-up dramatic lighting, black velvet/dark gradient backgrounds for hero/category.
+
+One clear CTA in hero.
+
+Micro-trust text under CTA (shipping/returns).
