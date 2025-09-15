@@ -70,7 +70,7 @@ export default function Offers() {
   ];
 
   const { data: featuredProducts = [] } = useQuery<Product[]>({
-    queryKey: ["/api/products/featured", { limit: 6 }],
+    queryKey: ["/api/products/featured?limit=6"],
   });
 
   // Countdown timer for the main offer

@@ -31,17 +31,21 @@ export default function Shop() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+    if (filters.categories.length > 0) params.set('category', filters.categories[0]);
+    if (filters.metals.length > 0) params.set('metal', filters.metals[0]);
+    if (filters.gemstones.length > 0) params.set('gemstone', filters.gemstones[0]);
+    if (filters.priceRange[0] > 0) params.set('minPrice', filters.priceRange[0].toString());
+    if (filters.priceRange[1] < 500000) params.set('maxPrice', filters.priceRange[1].toString());
+    params.set('sortBy', filters.sortBy);
+    params.set('page', currentPage.toString());
+    params.set('limit', itemsPerPage.toString());
+    return params.toString();
+  };
+
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ["/api/products", { 
-      category: filters.categories.length > 0 ? filters.categories[0] : undefined,
-      metal: filters.metals.length > 0 ? filters.metals[0] : undefined,
-      gemstone: filters.gemstones.length > 0 ? filters.gemstones[0] : undefined,
-      minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : undefined,
-      maxPrice: filters.priceRange[1] < 500000 ? filters.priceRange[1] : undefined,
-      sortBy: filters.sortBy,
-      page: currentPage,
-      limit: itemsPerPage
-    }],
+    queryKey: [`/api/products?${buildQueryParams()}`],
   });
 
   const products = productsData?.products || [];

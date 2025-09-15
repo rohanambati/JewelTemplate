@@ -32,17 +32,17 @@ export default function ProductDetail() {
   const [isZoomed, setIsZoomed] = useState(false);
 
   const { data: product, isLoading } = useQuery<Product>({
-    queryKey: ["/api/products", slug],
+    queryKey: [`/api/products/${slug}`],
     enabled: !!slug,
   });
 
   const { data: reviews = [] } = useQuery<Review[]>({
-    queryKey: ["/api/products", product?.id, "reviews"],
+    queryKey: [`/api/products/${product?.id}/reviews`],
     enabled: !!product?.id,
   });
 
-  const { data: relatedProducts = [] } = useQuery<Product[]>({
-    queryKey: ["/api/products", { category: product?.category, limit: 4 }],
+  const { data: relatedProducts = [] } = useQuery<{ products: Product[] }>({
+    queryKey: [`/api/products?category=${product?.category}&limit=4`],
     enabled: !!product?.category,
   });
 
@@ -476,15 +476,15 @@ export default function ProductDetail() {
         </div>
 
         {/* Related Products */}
-        {relatedProducts.length > 0 && (
+        {relatedProducts?.products?.length > 0 && (
           <div className="mt-16">
             <h2 className="text-3xl font-serif font-bold text-foreground mb-8">You May Also Like</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts
+              {relatedProducts.products
                 .filter(p => p.id !== product.id)
                 .slice(0, 4)
-                .map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                .map((relatedProduct) => (
+                  <ProductCard key={relatedProduct.id} product={relatedProduct} />
                 ))}
             </div>
           </div>

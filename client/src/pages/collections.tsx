@@ -16,14 +16,16 @@ export default function Collections() {
   });
 
   const { data: collection } = useQuery<Collection>({
-    queryKey: ["/api/collections", collectionSlug],
+    queryKey: [`/api/collections/${collectionSlug}`],
     enabled: !!collectionSlug,
   });
 
-  const { data: collectionProducts = [] } = useQuery<Product[]>({
-    queryKey: ["/api/products", { collectionId: collection?.id }],
+  const { data: collectionProductsData } = useQuery<{ products: Product[] }>({
+    queryKey: [`/api/products?collectionId=${collection?.id}`],
     enabled: !!collection?.id,
   });
+
+  const collectionProducts = collectionProductsData?.products || [];
 
   // If viewing a specific collection
   if (collectionSlug && collection) {
