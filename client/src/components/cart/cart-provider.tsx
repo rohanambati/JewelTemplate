@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
 import type { CartItem, Product } from "@shared/schema";
 
 interface CartContextType {
@@ -26,6 +27,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuth();
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; type: 'percent'; value: number; description?: string } | undefined>(undefined);
 
   const { data: cartItems = [], isLoading } = useQuery<(CartItem & { product: Product })[]>({
@@ -145,6 +147,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     toast({ title: 'Promo Removed', description: 'The applied promo code has been removed.' });
   }
 
+  const handleAddToCart = (productId: string, quantity = 1, variant?: any) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to add items to your cart.",
+        variant: "destructive",
+        action: (
+          <a href="/signin" className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary focus:outline-none focus:ring-1 focus:ring-ring disabled:pointer-events-none disabled:opacity-50">
+            Sign In
+          </a>
+        ),
+      });
+      return;
+    }
+    addToCartMutation.mutate({ productId, quantity, variant });
+  };
+
   const value: CartContextType = {
     items: cartItems,
     totalItems,
@@ -153,8 +172,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     subtotalAfterDiscount,
     discountAmount,
     appliedPromo,
-    addToCart: (productId: string, quantity = 1, variant) => 
-      addToCartMutation.mutate({ productId, quantity, variant }),
+    addToCart: handleAddToCart,
     updateQuantity: (itemId: string, quantity: number) => 
       updateQuantityMutation.mutate({ itemId, quantity }),
     removeItem: (itemId: string) => removeItemMutation.mutate(itemId),

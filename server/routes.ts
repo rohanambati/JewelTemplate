@@ -3,10 +3,10 @@ import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage";
-import { insertCartItemSchema, insertWishlistItemSchema, insertOrderSchema, insertUserSchema, users } from "@shared/schema";
+import { insertCartItemSchema, insertWishlistItemSchema, insertOrderSchema, insertUserSchema, users, wishlistItems } from "@shared/schema";
 import { z } from "zod";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import passport from "./auth";
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -290,7 +290,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionId = (req as any).sessionID || req.headers['x-session-id'] as string;
       const userId = (req as any).user?.id;
       const items = await storage.getWishlistItems(userId, sessionId);
-      res.json(items);
+
+      // Enrich items with product details
+      const enriched = await Promise.all(
+        items.map(async (item: any) => {
+          try {
+            const product = await storage.getProduct(item.productId);
+            return { ...item, product };
+          } catch {
+            return { ...item, product: undefined };
+          }
+        })
+      );
+
+      res.json(enriched);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -301,17 +314,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionId = (req as any).sessionID || req.headers['x-session-id'] as string;
       const userId = (req as any).user?.id;
       
+      // Require authentication: favourites must be tied to the signed-in user
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
       const validatedData = insertWishlistItemSchema.parse({
         ...req.body,
         userId,
-        sessionId: userId ? undefined : sessionId
+        sessionId: undefined,
       });
 
-      const item = await storage.addToWishlist(validatedData);
-      res.json(item);
+      // Prevent duplicates for the same user/product
+      const existing = await db
+        .select()
+        .from(wishlistItems)
+        .where(and(eq(wishlistItems.userId, userId), eq(wishlistItems.productId, validatedData.productId)));
+
+      let item;
+      if (existing.length > 0) {
+        item = existing[0];
+      } else {
+        item = await storage.addToWishlist(validatedData);
+      }
+
+      // Enrich with product data
+      const product = await storage.getProduct(item.productId);
+      res.json({ ...item, product });
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+        return res.status(400).json({ message: error.issues });
       }
       res.status(500).json({ message: error.message });
     }

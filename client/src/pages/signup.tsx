@@ -74,7 +74,7 @@ export default function Signup() {
             Create Account
           </CardTitle>
           <CardDescription>
-            Join SparkleForge and discover exquisite jewelry
+            Join Vishwanath Jewellers and discover exquisite jewelry
           </CardDescription>
         </CardHeader>
         <CardContent>

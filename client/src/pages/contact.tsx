@@ -81,7 +81,7 @@ export default function Contact() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h3 className="font-semibold text-foreground mb-2">Terces Jewellery Flagship Store</h3>
+                  <h3 className="font-semibold text-foreground mb-2">Vishwanath Jewellers Flagship Store</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     123 Jewelry Street, Bandra West<br />
                     Mumbai, Maharashtra 400050<br />
@@ -101,7 +101,7 @@ export default function Contact() {
                   <div className="flex items-center space-x-3">
                     <Mail className="h-5 w-5 text-primary flex-shrink-0" />
                     <div>
-                      <p className="font-medium">hello@tercesjewellery.com</p>
+                      <p className="font-medium">hello@vishwanathjewellery.com</p>
                       <p className="text-sm text-muted-foreground">General Inquiries</p>
                     </div>
                   </div>

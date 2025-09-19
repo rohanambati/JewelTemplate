@@ -32,7 +32,7 @@ export default function Cookies() {
         <Card className="mb-8">
           <CardContent className="p-6">
             <p className="text-lg text-muted-foreground leading-relaxed">
-              This Cookie Policy explains how Terces Jewellery uses cookies and similar technologies when you visit our website. 
+              This Cookie Policy explains how Vishwanath Jewellers uses cookies and similar technologies when you visit our website. 
               We use cookies to enhance your browsing experience, analyze website traffic, and provide personalized content.
             </p>
           </CardContent>
@@ -292,7 +292,7 @@ export default function Cookies() {
               If you have any questions about our use of cookies, please contact us:
             </p>
             <div className="space-y-2 text-muted-foreground">
-              <p>Email: privacy@tercesjewellery.com</p>
+              <p>Email: privacy@vishwanathjewellery.com</p>
               <p>Phone: +91 98765 43210</p>
             </div>
           </CardContent>

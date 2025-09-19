@@ -57,7 +57,7 @@ export default function Signin() {
             Welcome Back
           </CardTitle>
           <CardDescription>
-            Sign in to your SparkleForge account
+            Sign in to your Vishwanath Jewellers account
           </CardDescription>
         </CardHeader>
         <CardContent>

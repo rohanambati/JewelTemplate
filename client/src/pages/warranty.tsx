@@ -78,7 +78,7 @@ export default function Warranty() {
             <p>• Contact support with your order number, photos, and a description of the issue.</p>
             <p>• Our team will assess eligibility and provide next steps within 2–3 business days.</p>
             <Separator className="my-2" />
-            <p className="text-sm">Email: support@tercesjewellery.com • Phone: +91 98765 43210</p>
+            <p className="text-sm">Email: support@vishwanathjewellery.com • Phone: +91 98765 43210</p>
           </CardContent>
         </Card>
       </div>

@@ -172,8 +172,8 @@ export default function Support() {
               <p className="text-muted-foreground mb-4">
                 Send us a detailed message
               </p>
-              <a href="mailto:support@tercesjewellery.com" className="text-primary hover:text-accent font-medium">
-                support@tercesjewellery.com
+              <a href="mailto:support@vishwanathjewellery.com" className="text-primary hover:text-accent font-medium">
+                support@vishwanathjewellery.com
               </a>
               <p className="text-xs text-muted-foreground mt-2">
                 Response within 24 hours

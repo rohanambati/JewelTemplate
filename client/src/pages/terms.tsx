@@ -31,7 +31,7 @@ export default function Terms() {
         <Card className="mb-8">
           <CardContent className="p-6">
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Welcome to Terces Jewellery. These Terms of Service govern your use of our website and the purchase of our products. 
+              Welcome to Vishwanath Jewellers. These Terms of Service govern your use of our website and the purchase of our products. 
               By accessing our website or making a purchase, you agree to be bound by these terms and conditions.
             </p>
           </CardContent>
@@ -226,7 +226,7 @@ export default function Terms() {
           <CardContent>
             <p className="text-muted-foreground mb-4">
               All content on this website, including designs, text, graphics, logos, and images, 
-              is the property of Terces Jewellery and is protected by copyright and trademark laws.
+              is the property of Vishwanath Jewellers and is protected by copyright and trademark laws.
             </p>
             <ul className="space-y-2 text-muted-foreground">
               <li>• You may not reproduce, distribute, or modify our content</li>
@@ -243,7 +243,7 @@ export default function Terms() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              To the maximum extent permitted by law, Terces Jewellery shall not be liable for any indirect, 
+              To the maximum extent permitted by law, Vishwanath Jewellers shall not be liable for any indirect, 
               incidental, special, consequential, or punitive damages, including but not limited to loss of profits, 
               data, or use, arising out of or relating to your use of our website or products.
             </p>
@@ -274,7 +274,7 @@ export default function Terms() {
               For questions about these Terms of Service, please contact us:
             </p>
             <div className="space-y-2 text-muted-foreground">
-              <p>Email: legal@tercesjewellery.com</p>
+              <p>Email: legal@vishwanathjewellery.com</p>
               <p>Phone: +91 98765 43210</p>
               <p>Address: Mumbai, India</p>
             </div>

@@ -31,7 +31,7 @@ export default function Privacy() {
         <Card className="mb-8">
           <CardContent className="p-6">
             <p className="text-lg text-muted-foreground leading-relaxed">
-              At Terces Jewellery, we are committed to protecting your privacy and ensuring the security of your personal information. 
+              At Vishwanath Jewellers, we are committed to protecting your privacy and ensuring the security of your personal information. 
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website 
               or make a purchase from us.
             </p>
@@ -184,7 +184,7 @@ export default function Privacy() {
             <div className="space-y-2 text-muted-foreground">
               <p className="flex items-center">
                 <Mail className="h-4 w-4 mr-2 text-primary" />
-                privacy@tercesjewellery.com
+                privacy@vishwanathjewellery.com
               </p>
               <p className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-primary" />

@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, User, ShoppingCart, Menu, X, Heart, LogOut } from "lucide-react";
+import { User, ShoppingCart, Menu, Heart, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -21,7 +19,6 @@ const navigation = [
 
 export default function Navbar() {
   const [location] = useLocation();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { totalItems } = useCart();
   const { totalItems: wishlistCount } = useWishlist();
   const { user, isAuthenticated, signout } = useAuth();
@@ -41,7 +38,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0" data-testid="logo-link">
             <h1 className="text-2xl font-serif font-semibold text-primary tracking-wide">
-              Terces Jewellery
+              Vishwanath Jewellers
             </h1>
           </Link>
 
@@ -67,42 +64,10 @@ export default function Navbar() {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-2">
-            {/* Search */}
-            <div className="relative">
-              {isSearchOpen ? (
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="search"
-                    placeholder="Search jewelry..."
-                    className="w-64 bg-input"
-                    autoFocus
-                    data-testid="search-input"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsSearchOpen(false)}
-                    data-testid="search-close"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsSearchOpen(true)}
-                  className="text-muted-foreground hover:text-primary"
-                  aria-label="Search"
-                  data-testid="search-toggle"
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
-              )}
-            </div>
+            {/* Search removed */}
 
             {/* Wishlist */}
-            <Link href="/wishlist" data-testid="wishlist-link">
+            <Link href="/favourites" data-testid="wishlist-link">
               <Button
                 variant="ghost"
                 size="sm"

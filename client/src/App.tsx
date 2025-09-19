@@ -30,6 +30,7 @@ import About from "./pages/about";
 import Care from "./pages/care";
 import Warranty from "./pages/warranty";
 import SizeGuide from "./pages/size-guide";
+import Favourites from "./pages/favourites";
 import { Suspense, useEffect } from "react";
 import { Button } from "./components/ui/button";
 
@@ -72,6 +73,7 @@ function Router() {
       <Route path="/care" component={Care} />
       <Route path="/warranty" component={Warranty} />
       <Route path="/size-guide" component={SizeGuide} />
+      <Route path="/favourites" component={Favourites} />
       <Route component={NotFound} />
     </Switch>
   );

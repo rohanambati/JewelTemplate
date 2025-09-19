@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "@/components/cart/cart-provider";
-import { useWishlist } from "@/components/wishlist/wishlist-provider";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { CURRENCY_SYMBOL } from "@/lib/constants";
 import type { Product } from "@shared/schema";
 
@@ -16,7 +16,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, className }: ProductCardProps) {
   const { addToCart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [imageLoading, setImageLoading] = useState(true);
 
   const inWishlist = isInWishlist(product.id);
@@ -32,11 +32,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (inWishlist) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product.id);
-    }
+    toggleWishlist(product.id);
   };
 
   const primaryImage = Array.isArray(product.images) && product.images.length > 0 
@@ -48,8 +44,8 @@ export default function ProductCard({ product, className }: ProductCardProps) {
       className={`product-card group overflow-hidden hover:shadow-2xl transition-all duration-300 border-border hover:border-primary/20 ${className}`}
       data-testid={`product-card-${product.id}`}
     >
-      <Link href={`/product/${product.slug}`}>
-        <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden">
+        <Link href={`/product/${product.slug}`}>
           {imageLoading && (
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
@@ -62,32 +58,34 @@ export default function ProductCard({ product, className }: ProductCardProps) {
             data-testid={`product-image-${product.id}`}
           />
           <div className="shimmer-overlay absolute inset-0 shimmer opacity-0 group-hover:opacity-100" />
-          
-          {/* Wishlist Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`absolute top-4 right-4 p-2 backdrop-blur-sm rounded-full transition-colors duration-200 ${
-              inWishlist 
-                ? "bg-primary/20 text-primary hover:bg-primary/30" 
-                : "bg-foreground/60 text-background hover:bg-foreground/70 hover:text-primary"
-            }`}
-            onClick={handleWishlistToggle}
-            data-testid={`wishlist-button-${product.id}`}
-          >
-            <Heart 
-              className={`h-5 w-5 ${inWishlist ? "fill-current" : ""}`} 
-            />
-          </Button>
+        </Link>
+        
+        {/* Wishlist Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`absolute top-4 right-4 p-2 backdrop-blur-sm rounded-full transition-colors duration-200 z-10 ${
+            inWishlist 
+              ? "bg-primary/20 text-primary hover:bg-primary/30" 
+              : "bg-foreground/60 text-background hover:bg-foreground/70 hover:text-primary"
+          }`}
+          onClick={handleWishlistToggle}
+          data-testid={`wishlist-button-${product.id}`}
+        >
+          <Heart 
+            className={`h-5 w-5 ${inWishlist ? "fill-current" : ""}`} 
+          />
+        </Button>
 
-          {/* Sale Badge */}
-          {product.compareAtPrice && parseFloat(product.compareAtPrice) > parseFloat(product.price) && (
-            <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground">
-              Sale
-            </Badge>
-          )}
-        </div>
+        {/* Sale Badge */}
+        {product.compareAtPrice && parseFloat(product.compareAtPrice) > parseFloat(product.price) && (
+          <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground z-10">
+            Sale
+          </Badge>
+        )}
+      </div>
 
+      <Link href={`/product/${product.slug}`}>
         <CardContent className="p-6">
           <h3 className="text-xl font-serif font-semibold text-card-foreground mb-2 line-clamp-2">
             {product.name}

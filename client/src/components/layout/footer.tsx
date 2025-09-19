@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="col-span-1">
             <h3 className="text-2xl font-serif font-semibold text-primary mb-4">
-              Terces Jewellery
+              Vishwanath Jewellers
             </h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               Crafting exceptional jewelry since 1985. Each piece tells a story of elegance, 
@@ -133,7 +133,7 @@ export default function Footer() {
                 <span className="mr-2">📞</span> +91 98765 43210
               </p>
               <p className="flex items-center">
-                <span className="mr-2">✉️</span> hello@tercesjewellery.com
+                <span className="mr-2">✉️</span> hello@vishwanathjewellery.com
               </p>
               <p className="flex items-center">
                 <span className="mr-2">📍</span> Mumbai, India
@@ -146,7 +146,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>&copy; 2024 Terces Jewellery. All rights reserved.</p>
+          <p>&copy; 2024 Vishwanath Jewellers. All rights reserved.</p>
           <div className="mt-4 md:mt-0 flex space-x-6">
             <Link href="/privacy" className="hover:text-primary transition-colors duration-200">
               Privacy Policy

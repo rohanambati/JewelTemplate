@@ -33,7 +33,7 @@ export default function About() {
             <div className="space-y-4">
               <h2 className="text-2xl font-serif font-semibold">Our Story</h2>
               <p className="text-muted-foreground leading-relaxed">
-                Terces Jewellery was founded with a vision to blend timeless elegance with modern design. Each piece is
+                Vishwanath Jewellers was founded with a vision to blend timeless elegance with modern design. Each piece is
                 handcrafted by master artisans, using ethically sourced materials and meticulous attention to detail.
               </p>
               <p className="text-muted-foreground leading-relaxed">
