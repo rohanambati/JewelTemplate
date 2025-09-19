@@ -1,9 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
+import bcrypt from "bcryptjs";
 import { storage } from "./storage";
-import { insertCartItemSchema, insertWishlistItemSchema, insertOrderSchema } from "@shared/schema";
+import { insertCartItemSchema, insertWishlistItemSchema, insertOrderSchema, insertUserSchema, users } from "@shared/schema";
 import { z } from "zod";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+import passport from "./auth";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -16,6 +20,87 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Seed data on startup
   await storage.seedData();
+
+  // Authentication routes
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      const { email, password, username, firstName, lastName, phone } = req.body;
+
+      // Validate input
+      const signupSchema = z.object({
+        email: z.string().email("Invalid email format"),
+        password: z.string().min(6, "Password must be at least 6 characters"),
+        username: z.string().min(3, "Username must be at least 3 characters"),
+        firstName: z.string().min(1, "First name is required"),
+        lastName: z.string().min(1, "Last name is required"),
+        phone: z.string().optional(),
+      });
+
+      const validatedData = signupSchema.parse({ email, password, username, firstName, lastName, phone });
+
+      // Check if user already exists
+      const existingUser = await db.select().from(users).where(eq(users.email, validatedData.email)).limit(1);
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "User with this email already exists" });
+      }
+
+      const existingUsername = await db.select().from(users).where(eq(users.username, validatedData.username)).limit(1);
+      if (existingUsername.length > 0) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
+
+      // Hash password
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds);
+
+      // Create user
+      const newUser = await db.insert(users).values({
+        email: validatedData.email,
+        password: hashedPassword,
+        username: validatedData.username,
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        phone: validatedData.phone,
+      }).returning();
+
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = newUser[0];
+      
+      res.status(201).json({ 
+        message: "User created successfully", 
+        user: userWithoutPassword 
+      });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/auth/signin", passport.authenticate('local'), (req, res) => {
+    res.json({ 
+      message: "Signed in successfully", 
+      user: req.user 
+    });
+  });
+
+  app.post("/api/auth/signout", (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error signing out" });
+      }
+      res.json({ message: "Signed out successfully" });
+    });
+  });
+
+  app.get("/api/auth/me", (req, res) => {
+    if (req.isAuthenticated()) {
+      res.json({ user: req.user });
+    } else {
+      res.status(401).json({ message: "Not authenticated" });
+    }
+  });
 
   // Collections routes
   app.get("/api/collections", async (req, res) => {
@@ -112,7 +197,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionId = (req as any).sessionID || req.headers['x-session-id'] as string;
       const userId = (req as any).user?.id;
       const items = await storage.getCartItems(userId, sessionId);
-      res.json(items);
+      // Enrich each cart item with full product details for client consumption
+      const itemsWithProduct = await Promise.all(
+        items.map(async (item) => {
+          const product = await storage.getProduct(item.productId);
+          return { ...item, product };
+        })
+      );
+      res.json(itemsWithProduct);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -164,6 +256,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req as any).user?.id;
       await storage.clearCart(userId, sessionId);
       res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Promo code validation
+  app.post("/api/promocode/validate", async (req, res) => {
+    try {
+      const { code } = req.body as { code?: string };
+      if (!code) {
+        return res.status(400).json({ message: "Promo code is required" });
+      }
+      const normalized = code.trim().toUpperCase();
+      if (normalized === "DIWALI25") {
+        return res.json({
+          valid: true,
+          code: normalized,
+          type: "percent",
+          value: 25,
+          description: "Festival Offer: 25% off on cart subtotal",
+        });
+      }
+      return res.status(400).json({ valid: false, message: "Invalid or expired promo code" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

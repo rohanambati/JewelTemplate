@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,12 +10,12 @@ import { useCart } from "@/components/cart/cart-provider";
 import { CURRENCY_SYMBOL, FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 export default function Cart() {
-  const { items, totalItems, totalAmount, updateQuantity, removeItem, clearCart } = useCart();
+  const { items, totalItems, subtotal, subtotalAfterDiscount, discountAmount, appliedPromo, updateQuantity, removeItem, clearCart, applyPromo, clearPromo } = useCart();
+  const [promoCode, setPromoCode] = useState("");
 
-  const subtotal = totalAmount;
-  const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 200;
-  const tax = subtotal * 0.18; // 18% GST
-  const total = subtotal + shippingCost + tax;
+  const shippingCost = subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : 200;
+  const tax = subtotalAfterDiscount * 0.18; // 18% GST
+  const total = subtotalAfterDiscount + shippingCost + tax;
   const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
 
   if (items.length === 0) {
@@ -91,36 +92,55 @@ export default function Cart() {
                   <div className="flex flex-col md:flex-row gap-6">
                     {/* Product Image */}
                     <div className="flex-shrink-0">
-                      <Link href={`/product/${item.product.slug}`}>
+                      {item.product?.slug ? (
+                        <Link href={`/product/${item.product.slug}`}>
+                          <img
+                            src={
+                              Array.isArray(item.product?.images) && item.product.images.length > 0
+                                ? item.product.images[0]
+                                : "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"
+                            }
+                            alt={item.product?.name || "Product image"}
+                            className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg hover:opacity-75 transition-opacity"
+                            data-testid={`cart-item-image-${item.id}`}
+                          />
+                        </Link>
+                      ) : (
                         <img
                           src={
-                            Array.isArray(item.product.images) && item.product.images.length > 0
+                            Array.isArray(item.product?.images) && item.product.images.length > 0
                               ? item.product.images[0]
                               : "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"
                           }
-                          alt={item.product.name}
-                          className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg hover:opacity-75 transition-opacity"
+                          alt={item.product?.name || "Product image"}
+                          className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg"
                           data-testid={`cart-item-image-${item.id}`}
                         />
-                      </Link>
+                      )}
                     </div>
 
                     {/* Product Details */}
                     <div className="flex-1 space-y-4">
                       <div>
-                        <Link href={`/product/${item.product.slug}`}>
-                          <h3 className="text-lg font-serif font-semibold text-foreground hover:text-primary transition-colors">
-                            {item.product.name}
+                        {item.product?.slug ? (
+                          <Link href={`/product/${item.product.slug}`}>
+                            <h3 className="text-lg font-serif font-semibold text-foreground hover:text-primary transition-colors">
+                              {item.product?.name || "Product"}
+                            </h3>
+                          </Link>
+                        ) : (
+                          <h3 className="text-lg font-serif font-semibold text-foreground">
+                            {item.product?.name || "Product"}
                           </h3>
-                        </Link>
+                        )}
                         <p className="text-sm text-muted-foreground mt-1">
-                          {item.product.shortDescription}
+                          {item.product?.shortDescription || ""}
                         </p>
                         <div className="flex items-center space-x-4 mt-2 text-sm">
-                          {item.product.sku && (
+                          {item.product?.sku && (
                             <span className="text-muted-foreground">SKU: {item.product.sku}</span>
                           )}
-                          {item.product.metal && (
+                          {item.product?.metal && (
                             <Badge variant="secondary">{item.product.metal}</Badge>
                           )}
                         </div>
@@ -130,9 +150,9 @@ export default function Cart() {
                         {/* Price */}
                         <div className="flex items-center space-x-2">
                           <span className="text-xl font-bold text-primary">
-                            {CURRENCY_SYMBOL}{parseFloat(item.product.price).toLocaleString()}
+                            {CURRENCY_SYMBOL}{parseFloat(item.product?.price || 0).toLocaleString()}
                           </span>
-                          {item.product.compareAtPrice && parseFloat(item.product.compareAtPrice) > parseFloat(item.product.price) && (
+                          {item.product?.compareAtPrice && parseFloat(item.product.compareAtPrice) > parseFloat(item.product?.price || 0) && (
                             <span className="text-sm text-muted-foreground line-through">
                               {CURRENCY_SYMBOL}{parseFloat(item.product.compareAtPrice).toLocaleString()}
                             </span>
@@ -180,7 +200,7 @@ export default function Cart() {
                       {/* Item Total */}
                       <div className="text-right">
                         <span className="text-lg font-semibold text-foreground">
-                          Total: {CURRENCY_SYMBOL}{(parseFloat(item.product.price) * item.quantity).toLocaleString()}
+                          Total: {CURRENCY_SYMBOL}{(parseFloat(item.product?.price || 0) * item.quantity).toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -200,6 +220,16 @@ export default function Cart() {
                 <div className="flex justify-between">
                   <span>Subtotal ({totalItems} items)</span>
                   <span>{CURRENCY_SYMBOL}{subtotal.toLocaleString()}</span>
+                </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount{appliedPromo ? ` (${appliedPromo.code})` : ''}</span>
+                    <span>-{CURRENCY_SYMBOL}{discountAmount.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span>Subtotal after discount</span>
+                  <span>{CURRENCY_SYMBOL}{subtotalAfterDiscount.toLocaleString()}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -229,11 +259,30 @@ export default function Cart() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Promo Code</label>
                   <div className="flex space-x-2">
-                    <Input placeholder="Enter code" className="flex-1" />
-                    <Button variant="outline" size="sm">
-                      Apply
-                    </Button>
+                    <Input
+                      placeholder="Enter code"
+                      className="flex-1"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                    />
+                    {appliedPromo ? (
+                      <Button variant="outline" size="sm" onClick={clearPromo} data-testid="remove-promo">
+                        Remove
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => applyPromo(promoCode)}
+                        data-testid="apply-promo"
+                      >
+                        Apply
+                      </Button>
+                    )}
                   </div>
+                  {appliedPromo && (
+                    <p className="text-sm text-green-600">Applied: {appliedPromo.code} ({appliedPromo.value}% off)</p>
+                  )}
                 </div>
 
                 <Separator />

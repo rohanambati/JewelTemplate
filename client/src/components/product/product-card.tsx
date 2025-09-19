@@ -70,7 +70,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
             className={`absolute top-4 right-4 p-2 backdrop-blur-sm rounded-full transition-colors duration-200 ${
               inWishlist 
                 ? "bg-primary/20 text-primary hover:bg-primary/30" 
-                : "bg-black/50 text-white hover:text-primary"
+                : "bg-foreground/60 text-background hover:bg-foreground/70 hover:text-primary"
             }`}
             onClick={handleWishlistToggle}
             data-testid={`wishlist-button-${product.id}`}

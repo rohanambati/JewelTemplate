@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -7,11 +7,17 @@ import type { CartItem, Product } from "@shared/schema";
 interface CartContextType {
   items: (CartItem & { product: Product })[];
   totalItems: number;
-  totalAmount: number;
+  totalAmount: number; // legacy: equals subtotalAfterDiscount for backward compatibility
+  subtotal: number;
+  subtotalAfterDiscount: number;
+  discountAmount: number;
+  appliedPromo?: { code: string; type: 'percent'; value: number; description?: string };
   addToCart: (productId: string, quantity?: number, variant?: any) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   removeItem: (itemId: string) => void;
   clearCart: () => void;
+  applyPromo: (code: string) => Promise<void>;
+  clearPromo: () => void;
   isLoading: boolean;
 }
 
@@ -20,8 +26,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; type: 'percent'; value: number; description?: string } | undefined>(undefined);
 
-  const { data: cartItems = [], isLoading } = useQuery({
+  const { data: cartItems = [], isLoading } = useQuery<(CartItem & { product: Product })[]>({
     queryKey: ["/api/cart"],
     refetchOnWindowFocus: false,
   });
@@ -111,20 +118,49 @@ export function CartProvider({ children }: { children: ReactNode }) {
   });
 
   const totalItems = cartItems.reduce((sum: number, item: CartItem) => sum + item.quantity, 0);
-  const totalAmount = cartItems.reduce((sum: number, item: any) => {
+  const subtotal = cartItems.reduce((sum: number, item: any) => {
     return sum + (parseFloat(item.product?.price || 0) * item.quantity);
   }, 0);
+
+  const discountAmount = appliedPromo
+    ? Math.max(0, Math.round((subtotal * appliedPromo.value) / 100))
+    : 0;
+
+  const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
+
+  async function applyPromo(code: string) {
+    try {
+      const res = await apiRequest('POST', '/api/promocode/validate', { code });
+      const data = await res.json();
+      setAppliedPromo({ code: data.code, type: data.type, value: data.value, description: data.description });
+      toast({ title: 'Promo Applied', description: `${data.code} - ${data.description || data.value + '% off'}` });
+    } catch (err: any) {
+      setAppliedPromo(undefined);
+      toast({ title: 'Invalid promo code', description: err.message || 'Please check the code and try again', variant: 'destructive' });
+    }
+  }
+
+  function clearPromo() {
+    setAppliedPromo(undefined);
+    toast({ title: 'Promo Removed', description: 'The applied promo code has been removed.' });
+  }
 
   const value: CartContextType = {
     items: cartItems,
     totalItems,
-    totalAmount,
+    totalAmount: subtotalAfterDiscount,
+    subtotal,
+    subtotalAfterDiscount,
+    discountAmount,
+    appliedPromo,
     addToCart: (productId: string, quantity = 1, variant) => 
       addToCartMutation.mutate({ productId, quantity, variant }),
     updateQuantity: (itemId: string, quantity: number) => 
       updateQuantityMutation.mutate({ itemId, quantity }),
     removeItem: (itemId: string) => removeItemMutation.mutate(itemId),
     clearCart: () => clearCartMutation.mutate(),
+    applyPromo,
+    clearPromo,
     isLoading: isLoading || addToCartMutation.isPending || updateQuantityMutation.isPending || removeItemMutation.isPending,
   };
 

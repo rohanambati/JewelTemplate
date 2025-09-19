@@ -148,7 +148,7 @@ export default function ProductDetail() {
                   }`}
                   data-testid="product-main-image"
                 />
-                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-full p-2">
+                <div className="absolute top-4 right-4 bg-foreground/60 hover:bg-foreground/70 text-background backdrop-blur-sm rounded-full p-2 transition-colors">
                   <ZoomIn className="h-4 w-4 text-white" />
                 </div>
               </div>
@@ -159,7 +159,7 @@ export default function ProductDetail() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-foreground/60 text-background hover:bg-foreground/70"
                     onClick={() => setSelectedImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1)}
                     data-testid="prev-image"
                   >
@@ -168,7 +168,7 @@ export default function ProductDetail() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-foreground/60 text-background hover:bg-foreground/70"
                     onClick={() => setSelectedImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1)}
                     data-testid="next-image"
                   >

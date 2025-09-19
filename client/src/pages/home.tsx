@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <div className="min-h-screen" data-testid="home-page">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-spotlight">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-spotlight text-white">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -30,11 +30,11 @@ export default function Home() {
         
         {/* Content Overlay */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground mb-6 leading-tight tracking-wide">
+          <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight tracking-wide">
             Elevate Your{" "}
             <span className="text-primary">Elegance</span>
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-white/85 mb-8 leading-relaxed max-w-2xl mx-auto">
             Handcrafted jewelry where timeless design meets modern sophistication.
           </p>
           
@@ -50,12 +50,12 @@ export default function Home() {
           </Link>
           
           {/* Micro-trust text */}
-          <div className="mt-6 text-sm text-muted-foreground flex items-center justify-center space-x-6">
-            <span className="flex items-center">
+          <div className="mt-6 text-sm text-white/80 flex items-center justify-center space-x-6">
+            <span className="flex items-center text-white/85">
               <Truck className="w-4 h-4 mr-2 text-primary" />
               Free Shipping
             </span>
-            <span className="flex items-center">
+            <span className="flex items-center text-white/85">
               <RotateCcw className="w-4 h-4 mr-2 text-primary" />
               30-Day Returns
             </span>

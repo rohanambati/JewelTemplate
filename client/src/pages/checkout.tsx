@@ -18,7 +18,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { CURRENCY_SYMBOL, FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 // Load Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
+const stripePromise = loadStripe("pk_test_51S6rKgLR42FfBY3TBQlxMKV3W0T6WeAcgyMM5Q7mPskxwWy6zIiJKOq15kTeAQ7JKl681YrFTT9k0m40vyABZz7100JwQTcSSq");
 
 const checkoutSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

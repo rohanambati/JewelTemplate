@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, User, ShoppingCart, Menu, X, Heart } from "lucide-react";
+import { Search, User, ShoppingCart, Menu, X, Heart, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useCart } from "@/components/cart/cart-provider";
 import { useWishlist } from "@/components/wishlist/wishlist-provider";
+import { useAuth } from "@/contexts/auth-context";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -22,6 +24,15 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { totalItems } = useCart();
   const { totalItems: wishlistCount } = useWishlist();
+  const { user, isAuthenticated, signout } = useAuth();
+
+  const handleSignout = async () => {
+    try {
+      await signout();
+    } catch (error) {
+      console.error("Signout failed:", error);
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 glass-effect border-b border-border" data-testid="navbar">
@@ -108,15 +119,57 @@ export default function Navbar() {
             </Link>
 
             {/* Account */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary"
-              aria-label="Account"
-              data-testid="account-button"
-            >
-              <User className="h-5 w-5" />
-            </Button>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-primary"
+                    aria-label="Account"
+                    data-testid="account-button"
+                  >
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-2 py-1.5 text-sm font-medium">
+                    {user?.firstName} {user?.lastName}
+                  </div>
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                    {user?.email}
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Orders
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link href="/signin">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" className="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             {/* Cart */}
             <Link href="/cart" data-testid="cart-link">
@@ -164,6 +217,43 @@ export default function Navbar() {
                       {item.name}
                     </Link>
                   ))}
+                  
+                  {/* Mobile Auth Buttons */}
+                  <div className="pt-4 border-t border-border">
+                    {isAuthenticated ? (
+                      <div className="space-y-4">
+                        <div className="text-sm">
+                          <div className="font-medium">{user?.firstName} {user?.lastName}</div>
+                          <div className="text-muted-foreground">{user?.email}</div>
+                        </div>
+                        <div className="space-y-2">
+                          <Button variant="ghost" className="w-full justify-start">
+                            Profile
+                          </Button>
+                          <Button variant="ghost" className="w-full justify-start">
+                            Orders
+                          </Button>
+                          <Button variant="ghost" className="w-full justify-start" onClick={handleSignout}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sign Out
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Link href="/signin" className="block">
+                          <Button variant="ghost" className="w-full">
+                            Sign In
+                          </Button>
+                        </Link>
+                        <Link href="/signup" className="block">
+                          <Button className="w-full bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </nav>
               </SheetContent>
             </Sheet>
